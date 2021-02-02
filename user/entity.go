@@ -2,7 +2,7 @@ package user
 
 import "time"
 
-type Users struct {
+type User struct {
 	ID             int
 	Name           string
 	Occupation     string
