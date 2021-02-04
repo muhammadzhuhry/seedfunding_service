@@ -17,6 +17,7 @@ func NewService(repository Repository) *service {
 }
 
 func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
+	// mapping struct RegisterUserInput yg di pass dari handler ke struct User
 	user := User{}
 	user.Name = input.Name
 	user.Email = input.Email
@@ -31,6 +32,7 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	user.PasswordHash = string(PasswordHash)
 	user.Role = "user"
 
+	// passing struct User yg sudah di mapping dgn RegisterUserInput ke repository
 	newUser, err := s.repository.Save(user)
 
 	if err != nil {

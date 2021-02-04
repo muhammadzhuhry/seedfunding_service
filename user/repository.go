@@ -16,6 +16,7 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
+// proses simpan ke database
 func (r *repository) Save(user User) (User, error) {
 	err := r.db.Create(&user).Error
 
