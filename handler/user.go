@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/muhammadzhuhry/bwastartup/helper"
 	"github.com/muhammadzhuhry/bwastartup/user"
@@ -50,7 +49,6 @@ func (h *userHandler) Login(c *gin.Context) {
 	// menangkap inputan user lalu di bind ke dalam struct LoginInput
 	var input user.LoginInput
 
-	fmt.Println(input)
 	// proses binding / map
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
