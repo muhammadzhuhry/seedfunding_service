@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/muhammadzhuhry/bwastartup/helper"
 	"github.com/muhammadzhuhry/bwastartup/user"
@@ -42,5 +43,37 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	formatter := user.FormatUser(newUser, "tokentokentoken")
 
 	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", formatter)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) Login(c *gin.Context) {
+	// menangkap inputan user lalu di bind ke dalam struct LoginInput
+	var input user.LoginInput
+
+	fmt.Println(input)
+	// proses binding / map
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// passing input ke service
+	LoggedinUser, err := h.userService.Login(input)
+	if err != nil {
+		errorMessage := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	formatter := user.FormatUser(LoggedinUser, "tokentokentoken")
+
+	response := helper.APIResponse("Succesfully loggedin", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 }
