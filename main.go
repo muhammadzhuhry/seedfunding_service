@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/muhammadzhuhry/bwastartup/auth"
 	"github.com/muhammadzhuhry/bwastartup/handler"
 	"github.com/muhammadzhuhry/bwastartup/user"
 	"gorm.io/driver/mysql"
@@ -19,8 +20,9 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
+	authService := auth.NewService()
 
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
