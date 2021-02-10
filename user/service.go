@@ -11,6 +11,7 @@ type Service interface {
 	Login(input LoginInput) (User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	SaveAvatar(ID int, fileLocation string) (User, error)
+	GetUserByID(ID int) (User, error)
 }
 
 type service struct {
@@ -21,7 +22,7 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-// struct function / method
+// struct function / method register user
 func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	// mapping struct RegisterUserInput yg di pass dari handler ke struct User
 	user := User{}
@@ -48,7 +49,7 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	return newUser, nil
 }
 
-// struct function / method
+// struct function / method login
 func (s *service) Login(input LoginInput) (User, error) {
 	email := input.Email
 	password := input.Password
@@ -71,7 +72,7 @@ func (s *service) Login(input LoginInput) (User, error) {
 	return user, nil
 }
 
-// struct functino / method
+// struct functino / method is email available
 func (s *service) IsEmailAvailable(input CheckEmailInput) (bool, error) {
 	email := input.Email
 
@@ -88,6 +89,7 @@ func (s *service) IsEmailAvailable(input CheckEmailInput) (bool, error) {
 	return false, nil
 }
 
+// struct function / method save avatar
 func (s *service) SaveAvatar(ID int, fileLocation string) (User, error) {
 	user, err := s.repository.FindByID(ID)
 	if err != nil {
@@ -102,4 +104,18 @@ func (s *service) SaveAvatar(ID int, fileLocation string) (User, error) {
 	}
 
 	return updatedUser, nil
+}
+
+// struct function / method get user by id
+func (s *service) GetUserByID(ID int) (User, error) {
+	user, err := s.repository.FindByID(ID)
+	if err != nil {
+		return user, err
+	}
+
+	if user.ID == 0 {
+		return user, errors.New("No user found on that ID")
+	}
+
+	return user, nil
 }
