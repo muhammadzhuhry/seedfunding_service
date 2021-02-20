@@ -27,17 +27,13 @@ func main() {
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
 
-	campaigns, _ := campaignRepository.FindByUserID(1)
-	fmt.Println("DEBUG>>>")
-	for _, campaign := range campaigns {
-		fmt.Println(campaign.Name)
-		if len(campaign.CampaignImages) > 0 {
-			fmt.Println(campaign.CampaignImages[0].FileName)
-		}
-	}
-
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
+	// membuat instance yg mempassing repository agar service mempunyai akses ke reposiotry
+	campaignService := campaign.NewService(campaignRepository)
+
+	campaigns, _ := campaignService.GetCampaigns(2)
+	fmt.Println(len(campaigns))
 
 	userHandler := handler.NewUserHandler(userService, authService)
 
