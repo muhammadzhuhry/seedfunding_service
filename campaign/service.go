@@ -4,6 +4,7 @@ type Service interface {
 	// parameternya bukan struct karena yg user kirim bukan berbentuk json jd tidak perlu di binding
 	// melainkan langsung mengambil dari parameter
 	GetCampaigns(userID int) ([]Campaign, error)
+	GetCampaignByID(input GetCampaignDetailInput) (Campaign, error)
 }
 
 type service struct {
@@ -31,4 +32,13 @@ func (s *service) GetCampaigns(userID int) ([]Campaign, error) {
 	}
 
 	return campaigns, nil
+}
+
+func (s *service) GetCampaign(input GetCampaignDetailInput) (Campaign, error) {
+	campaign, err := s.repository.FindByID(input.ID)
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
 }
