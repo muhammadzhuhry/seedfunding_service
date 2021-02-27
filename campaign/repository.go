@@ -49,5 +49,5 @@ func (r *repository) FindByID(ID int) (Campaign, error) {
 		return campaign, err
 	}
 
-	return campaign, err
+	return campaign, nil
 }
