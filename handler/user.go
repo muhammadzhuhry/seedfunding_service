@@ -143,6 +143,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
+	// mengambil key currentUser yang mana currentUser ini di set melalau auth middleware
 	currentUser := c.MustGet("currentUser").(user.User)
 	userID := currentUser.ID
 

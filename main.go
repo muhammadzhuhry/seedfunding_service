@@ -31,21 +31,6 @@ func main() {
 	// membuat instance yg mempassing repository agar service mempunyai akses ke reposiotry
 	campaignService := campaign.NewService(campaignRepository)
 
-	input := campaign.CreateCampaignInput{}
-	input.Name = "Penggalangan Dana Startup"
-	input.ShortDescription = "Short"
-	input.Description = "Looong"
-	input.GoalAmount = 100000000
-	input.Perks = "hadiah satu, dua, dan tiga"
-
-	inputUser, _ := userService.GetUserByID(1)
-	input.User = inputUser
-
-	_, err = campaignService.CreateCampaign(input)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
@@ -61,6 +46,7 @@ func main() {
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 
 	router.Run()
 }
