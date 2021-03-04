@@ -71,7 +71,7 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 		return
 	}
 
-	// mengambil key currentUser yang mana currentUser ini di set melalau auth middleware
+	// mengambil key currentUser yang mana currentUser ini di set melalau auth middleware dan membinding ke struct User
 	currentUser := c.MustGet("currentUser").(user.User)
 	input.User = currentUser
 
@@ -87,12 +87,6 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	response := helper.APIResponse("Success to create campaign", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 }
-
-// handler
-// mapping dari input ke input struct
-// input dari user dan juga uri
-// service
-// repository update campaign
 
 func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 	var inputID campaign.GetCampaignDetailInput
@@ -122,6 +116,10 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	// mengambil key currentUser yang mana currentUser ini di set melalau auth middleware dan membinding ke struct User
+	currentUser := c.MustGet("currentUser").(user.User)
+	inputData.User = currentUser
 
 	formatter := campaign.FormatCampaign(updatedCampaign)
 
