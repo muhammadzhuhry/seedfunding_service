@@ -7,6 +7,7 @@ import (
 	"github.com/muhammadzhuhry/bwastartup/campaign"
 	"github.com/muhammadzhuhry/bwastartup/handler"
 	"github.com/muhammadzhuhry/bwastartup/helper"
+	"github.com/muhammadzhuhry/bwastartup/transaction"
 	"github.com/muhammadzhuhry/bwastartup/user"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -25,30 +26,38 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
+	transactionRepository := transaction.NewRepository(db)
 
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	// membuat instance yg mempassing repository agar service mempunyai akses ke reposiotry
 	campaignService := campaign.NewService(campaignRepository)
+	transactionService := transaction.NewService(transactionRepository)
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
 	router.Static("/images", "./images")
 
 	api := router.Group("/api/v1")
 
+	// user
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
 
+	// campaign
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
+
+	// transaction
+	api.GET("campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
 
 	router.Run()
 }
