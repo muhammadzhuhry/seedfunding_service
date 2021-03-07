@@ -138,10 +138,17 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 	// karena form jadi methodnya hanya ShouldBind
 	err := c.ShouldBind(&input)
 	if err != nil {
-		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", nil)
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", errorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	// mengambil key currentUser yang mana currentUser ini di set melalau auth middleware
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
 
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -152,12 +159,8 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 		return
 	}
 
-	// mengambil key currentUser yang mana currentUser ini di set melalau auth middleware
-	currentUser := c.MustGet("currentUser").(user.User)
-	UserID := currentUser.ID
-
 	//path := "images/" + file.Filename
-	path := fmt.Sprintf("images/%d-%s", UserID, file.Filename)
+	path := fmt.Sprintf("images/%d-%s", input.User.ID, file.Filename)
 
 	// gin built in function for upload file
 	err = c.SaveUploadedFile(file, path)
