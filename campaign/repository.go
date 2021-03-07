@@ -16,6 +16,7 @@ type repository struct {
 	db *gorm.DB
 }
 
+// function yg digunakan sbg instansiasi dari main go untuk memassing db
 func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }

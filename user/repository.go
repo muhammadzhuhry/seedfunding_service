@@ -14,6 +14,7 @@ type repository struct {
 	db *gorm.DB
 }
 
+// function yg digunakan sbg instansiasi dari main go untuk memassing db
 func NewRepository(db *gorm.DB) *repository {
 	// membuat objek baru dr struk repository yg diatas
 	// lalu karena struct repository memiliki field db maka perlu diisi nilainya menggunakan parameter yg ada di NewRepository
