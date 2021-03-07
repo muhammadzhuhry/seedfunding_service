@@ -3,8 +3,8 @@ package transaction
 import "gorm.io/gorm"
 
 type Repository interface {
-	GetByCampaignID(CampaignID int) ([]Transaction, error)
-	GetByUserID(UserID int) ([]Transaction, error)
+	GetByCampaignID(campaignID int) ([]Transaction, error)
+	GetByUserID(userID int) ([]Transaction, error)
 }
 
 type repository struct {
@@ -16,10 +16,10 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) GetByCampaignID(CampaignID int) ([]Transaction, error) {
+func (r *repository) GetByCampaignID(campaignID int) ([]Transaction, error) {
 	var transactions []Transaction
 
-	err := r.db.Preload("User").Where("campaign_id = ?", CampaignID).Order("id desc").Find(&transactions).Error
+	err := r.db.Preload("User").Where("campaign_id = ?", campaignID).Order("id desc").Find(&transactions).Error
 	if err != nil {
 		return transactions, err
 	}
@@ -27,10 +27,10 @@ func (r *repository) GetByCampaignID(CampaignID int) ([]Transaction, error) {
 	return transactions, nil
 }
 
-func (r *repository) GetByUserID(UserID int) ([]Transaction, error) {
+func (r *repository) GetByUserID(userID int) ([]Transaction, error) {
 	var transactions []Transaction
 
-	err := r.db.Preload("Campaign.CampaignImages", "campaign_images.is_primary = 1").Where("user_id = ?", UserID).Find(transactions).Error
+	err := r.db.Preload("Campaign.CampaignImages", "campaign_images.is_primary = 1").Where("user_id = ?", userID).Find(&transactions).Error
 	if err != nil {
 		return transactions, err
 	}
