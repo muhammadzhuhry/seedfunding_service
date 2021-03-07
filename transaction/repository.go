@@ -1,1 +1,27 @@
 package transaction
+
+import "gorm.io/gorm"
+
+type Repository interface {
+	GetByCampaignID(CampaignID int) ([]Transaction, error)
+}
+
+type repository struct {
+	db *gorm.DB
+}
+
+// function yg digunakan sbg instansiasi dari main go untuk memassing db
+func NewRepository(db *gorm.DB) repository {
+	return repository{db}
+}
+
+func (r *repository) GetByCampaignID(CampaignID int) ([]Transaction, error) {
+	var transactions []Transaction
+
+	err := r.db.Preload("User").Where("campaign_id = ?", CampaignID).Find(&transactions).Error
+	if err != nil {
+		return transactions, err
+	}
+
+	return transactions, nil
+}
