@@ -11,8 +11,8 @@ type repository struct {
 }
 
 // function yg digunakan sbg instansiasi dari main go untuk memassing db
-func NewRepository(db *gorm.DB) repository {
-	return repository{db}
+func NewRepository(db *gorm.DB) *repository {
+	return &repository{db}
 }
 
 func (r *repository) GetByCampaignID(CampaignID int) ([]Transaction, error) {
