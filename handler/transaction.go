@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/muhammadzhuhry/bwastartup/helper"
 	"github.com/muhammadzhuhry/bwastartup/transaction"
+	"github.com/muhammadzhuhry/bwastartup/user"
 	"net/http"
 )
 
@@ -31,6 +32,10 @@ func (h *transactionHandler) GetCampaignTransactions(c *gin.Context) {
 		return
 	}
 
+	// mengambil key currentUser yang mana currentUser ini di set melalau auth middleware dan membinding ke struct User
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
 	transactions, err := h.transactionService.GetTransactionsByCampaignID(input)
 	if err != nil {
 		response := helper.APIResponse("Failed to get campaign's transactions", http.StatusBadRequest, "error", nil)
@@ -38,6 +43,6 @@ func (h *transactionHandler) GetCampaignTransactions(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("Campaign's transactions", http.StatusOK, "success", transactions)
+	response := helper.APIResponse("Campaign's transactions", http.StatusOK, "success", transaction.FormatCampaignTransactions(transactions))
 	c.JSON(http.StatusOK, response)
 }
