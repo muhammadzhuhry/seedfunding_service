@@ -32,7 +32,7 @@ func main() {
 	authService := auth.NewService()
 	// membuat instance yg mempassing repository agar service mempunyai akses ke reposiotry
 	campaignService := campaign.NewService(campaignRepository)
-	transactionService := transaction.NewService(transactionRepository)
+	transactionService := transaction.NewService(transactionRepository, campaignRepository)
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
