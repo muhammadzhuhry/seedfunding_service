@@ -34,6 +34,14 @@ func main() {
 	campaignService := campaign.NewService(campaignRepository)
 	transactionService := transaction.NewService(transactionRepository, campaignRepository)
 
+	user, _ := userService.GetUserByID(1)
+	input := transaction.CreateTransactionInput{
+		Amount:     5000000,
+		CampaignID: 5,
+		User:       user,
+	}
+	transactionService.CreateTransaction(input)
+
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
