@@ -67,3 +67,30 @@ func (h *transactionHandler) GetUserTransactions(c *gin.Context) {
 // handler tangkap input lalu mapping ke input struct dan manggil service
 // manggil service buat transaksi, manggil sistem midtrans
 // manggil repository create new transaction data
+
+func (h *transactionHandler) CreateTransaction(c *gin.Context) {
+	var input transaction.CreateTransactionInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Failed to create transaction", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	newTransaction, err := h.transactionService.CreateTransaction((input))
+	if err != nil {
+		response := helper.APIResponse("Failed to create transaction", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to create transaction", http.StatusOK, "success", newTransaction)
+	c.JSON(http.StatusOK, response)
+}
