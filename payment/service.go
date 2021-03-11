@@ -1,7 +1,6 @@
 package payment
 
 import (
-	"github.com/muhammadzhuhry/bwastartup/transaction"
 	"github.com/muhammadzhuhry/bwastartup/user"
 	"github.com/veritrans/go-midtrans"
 	"strconv"
@@ -11,14 +10,14 @@ type service struct {
 }
 
 type Service interface {
-	GetPaymentURL(transaction transaction.Transaction, user user.User) (string, error)
+	GetPaymentURL(transaction Transaction, user user.User) (string, error)
 }
 
 func NewService() *service {
 	return &service{}
 }
 
-func (s *service) GetPaymentURL(transaction transaction.Transaction, user user.User) (string, error) {
+func (s *service) GetPaymentURL(transaction Transaction, user user.User) (string, error) {
 	midclient := midtrans.NewClient()
 	midclient.ServerKey = ""
 	midclient.ClientKey = ""
