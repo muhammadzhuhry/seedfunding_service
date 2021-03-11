@@ -3,6 +3,7 @@ package transaction
 import (
 	"errors"
 	"github.com/muhammadzhuhry/bwastartup/campaign"
+	"github.com/muhammadzhuhry/bwastartup/payment"
 )
 
 type Service interface {
@@ -14,10 +15,11 @@ type Service interface {
 type service struct {
 	repository         Repository
 	campaignRepository campaign.Repository
+	paymentService     payment.Service
 }
 
-func NewService(repository Repository, campaignRepository campaign.Repository) *service {
-	return &service{repository, campaignRepository}
+func NewService(repository Repository, campaignRepository campaign.Repository, paymentService payment.Service) *service {
+	return &service{repository, campaignRepository, paymentService}
 }
 
 func (s *service) GetTransactionsByCampaignID(input GetCampaignTransactionsInput) ([]Transaction, error) {

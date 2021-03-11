@@ -7,6 +7,7 @@ import (
 	"github.com/muhammadzhuhry/bwastartup/campaign"
 	"github.com/muhammadzhuhry/bwastartup/handler"
 	"github.com/muhammadzhuhry/bwastartup/helper"
+	"github.com/muhammadzhuhry/bwastartup/payment"
 	"github.com/muhammadzhuhry/bwastartup/transaction"
 	"github.com/muhammadzhuhry/bwastartup/user"
 	"gorm.io/driver/mysql"
@@ -32,7 +33,8 @@ func main() {
 	authService := auth.NewService()
 	// membuat instance yg mempassing repository agar service mempunyai akses ke reposiotry
 	campaignService := campaign.NewService(campaignRepository)
-	transactionService := transaction.NewService(transactionRepository, campaignRepository)
+	paymentService := payment.NewService()
+	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
