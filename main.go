@@ -8,6 +8,7 @@ import (
 	"github.com/muhammadzhuhry/bwastartup/campaign"
 	"github.com/muhammadzhuhry/bwastartup/handler"
 	"github.com/muhammadzhuhry/bwastartup/helper"
+	"github.com/muhammadzhuhry/bwastartup/infra"
 	"github.com/muhammadzhuhry/bwastartup/payment"
 	"github.com/muhammadzhuhry/bwastartup/transaction"
 	"github.com/muhammadzhuhry/bwastartup/user"
@@ -19,6 +20,12 @@ import (
 )
 
 func main() {
+	// . -> load current directory
+	config, err := infra.LoadConfig(".")
+	if err != nil {
+		log.Fatal("Cannot load config:", err)
+	}
+
 	dsn := "root:@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -66,7 +73,7 @@ func main() {
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransactions)
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 
-	router.Run()
+	router.Run(config.Server)
 }
 
 func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc {
