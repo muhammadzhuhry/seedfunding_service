@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/muhammadzhuhry/bwastartup/auth"
 	"github.com/muhammadzhuhry/bwastartup/campaign"
@@ -41,6 +42,7 @@ func main() {
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
+	router.Use(cors.Default())
 	router.Static("/images", "./images")
 
 	api := router.Group("/api/v1")
@@ -50,6 +52,7 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	api.GET("/users/fetch", authMiddleware(authService, userService), userHandler.FetchUser)
 
 	// campaign
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
