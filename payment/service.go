@@ -1,8 +1,10 @@
 package payment
 
 import (
+	"github.com/muhammadzhuhry/bwastartup/infra"
 	"github.com/muhammadzhuhry/bwastartup/user"
 	"github.com/veritrans/go-midtrans"
+	"log"
 	"strconv"
 )
 
@@ -18,9 +20,14 @@ func NewService() *service {
 }
 
 func (s *service) GetPaymentURL(transaction Transaction, user user.User) (string, error) {
+	config, err := infra.LoadConfig(".")
+	if err != nil {
+		log.Fatal("Cannot load config:", err)
+	}
+
 	midclient := midtrans.NewClient()
-	midclient.ServerKey = ""
-	midclient.ClientKey = ""
+	midclient.ServerKey = config.ServerKey
+	midclient.ClientKey = config.ClientKey
 	midclient.APIEnvType = midtrans.Sandbox
 
 	snapGateway := midtrans.SnapGateway{
